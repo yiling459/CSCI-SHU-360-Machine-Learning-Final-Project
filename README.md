@@ -5,6 +5,7 @@
 ## Dataset
 * https://huggingface.co/datasets/quickdraw
 
-## Getting Started
+## Playground
+Following tutorials on huggingface
 ### Train an unconditioned image generation model
 * https://huggingface.co/docs/diffusers/main/en/tutorials/basic_training
