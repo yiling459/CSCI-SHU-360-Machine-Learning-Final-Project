@@ -9,8 +9,9 @@
 #SBATCH --job-name=train_lora
 
 
+singularity exec --nv --overlay /scratch/yg2709/ml_project_env/overlay-25GB-500K.ext3:ro /scratch/yg2709/ml_project_env/cuda11.6.124-cudnn8.4.0.27-devel-ubuntu20.04.4.sif /bin/bash
 
-singularity exec --nv --bind /scratch/yg2709/ml_project_env/overlay-25GB-500K:ro /scratch/yg2709/ml_project_env/cuda11.6.124-cudnn8.4.0.27-devel-ubuntu20.04.4.sif source /ext3/env.sh
+source /ext3/env.sh
 
 pwd
 
