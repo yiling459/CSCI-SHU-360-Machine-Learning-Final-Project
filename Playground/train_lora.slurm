@@ -1,12 +1,20 @@
-srun --nodes=1 --cpus-per-task=2 --mem=32GB --time=1:00:00 --gres=gpu:1 --pty /bin/bash
+#!/bin/bash
 
-singularity exec --nv --bind /scratch/yg2709/ml_project_env/overlay-25GB-500K source /ext3/env.sh
+#SBATCH --nodes=1
+#SBATCH --ntasks-per-node=1
+#SBATCH --cpus-per-task=1
+#SBATCH --time=1:00:00
+#SBATCH --mem=32GB
+#SBATCH --gres=gpu
+#SBATCH --job-name=train_lora
 
-which python
 
-cd /scratch/yg2709/CSCI-SHU-360-Machine-Learning-Final-Project/Playground/
+
+singularity exec --nv --bind /scratch/yg2709/ml_project_env/overlay-25GB-500K:ro /scratch/yg2709/ml_project_env/cuda11.6.124-cudnn8.4.0.27-devel-ubuntu20.04.4.sif source /ext3/env.sh
 
 pwd
+
+cd /scratch/yg2709/CSCI-SHU-360-Machine-Learning-Final-Project/Playground/
 
 export MODEL_NAME="runwayml/stable-diffusion-v1-5"
 export OUTPUT_DIR="/scratch/yg2709/CSCI-SHU-360-Machine-Learning-Final-Project/Playground/sddata/finetune/lora/pokemon"
