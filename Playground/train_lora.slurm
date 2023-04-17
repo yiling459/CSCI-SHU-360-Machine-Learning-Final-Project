@@ -3,7 +3,7 @@
 #SBATCH --nodes=1
 #SBATCH --ntasks-per-node=1
 #SBATCH --cpus-per-task=1
-#SBATCH --time=1:00:00
+#SBATCH --time=4:00:00
 #SBATCH --mem=32GB
 #SBATCH --gres=gpu
 #SBATCH --job-name=train_lora
@@ -34,9 +34,7 @@ accelerate launch --mixed_precision="fp16"  train_text_to_image_lora.py \
   --max_grad_norm=1 \
   --lr_scheduler="cosine" --lr_warmup_steps=0 \
   --output_dir=${OUTPUT_DIR} \
-  --push_to_hub=False \
   --hub_model_id=${HUB_MODEL_ID} \
-  --report_to=wandb \
   --checkpointing_steps=500 \
   --validation_prompt="A pokemon with blue eyes." \
   --seed=1337
