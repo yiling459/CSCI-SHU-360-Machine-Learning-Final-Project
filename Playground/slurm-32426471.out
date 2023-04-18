@@ -1,0 +1,6 @@
+/opt/slurm/data/slurmd/job32426471/slurm_script: line 14: /ext3/env.sh: No such file or directory
+/scratch/yg2709/CSCI-SHU-360-Machine-Learning-Final-Project/Playground
+Traceback (most recent call last):
+  File "/home/yg2709/.local/bin/accelerate", line 5, in <module>
+    from accelerate.commands.accelerate_cli import main
+ModuleNotFoundError: No module named 'accelerate'
