@@ -81,8 +81,23 @@ def main():
             log_with="tensorboard",
             logging_dir=logging_dir,
             project_config=accelerator_project_config,
-            rng_types=["cuda"],
     )
+
+    # Make one log on every process with the configuration for debugging.
+    logging.basicConfig(
+        format="%(asctime)s - %(levelname)s - %(name)s - %(message)s",
+        datefmt="%m/%d/%Y %H:%M:%S",
+        level=logging.INFO,
+    )
+    logger.info(accelerator.state, main_process_only=False)
+    if accelerator.is_local_main_process:
+        datasets.utils.logging.set_verbosity_warning()
+        transformers.utils.logging.set_verbosity_warning()
+        diffusers.utils.logging.set_verbosity_info()
+    else:
+        datasets.utils.logging.set_verbosity_error()
+        transformers.utils.logging.set_verbosity_error()
+        diffusers.utils.logging.set_verbosity_error()
 
     if accelerator.is_main_process:
         if output_dir is not None:
@@ -280,6 +295,10 @@ def main():
     num_update_steps_per_epoch = math.ceil(len(train_dataloader) / gradient_accumulation_steps)
     max_train_steps = num_train_epochs * num_update_steps_per_epoch
 
+    if accelerator.is_main_process:
+        accelerator.init_trackers("text2image-fine-tune")
+
+    # Train!
     total_batch_size = train_batch_size * accelerator.num_processes * gradient_accumulation_steps
 
     logger.info("***** Running training *****")
@@ -301,8 +320,6 @@ def main():
     num_validation_images = 1
     max_grad_norm = 1.0
 
-    # Train!
-    print("***** Running training *****")
     for epoch in range(first_epoch, num_train_epochs):
         unet.train()
         train_loss = 0.0
