@@ -71,6 +71,7 @@ def main():
     # Set seed before initializing model.
     seed = 1337
 
+    print("Configuring accelerator")
     logging_dir = os.path.join(output_dir, "logs")
     accelerator_project_config = ProjectConfiguration(total_limit=None)
 
@@ -78,9 +79,10 @@ def main():
             gradient_accumulation_steps=1,
             mixed_precision="fp16",
             log_with="tensorboard",
-            logging_dir=logging_dir,
+            project_dir=logging_dir,
             project_config=accelerator_project_config,
-        )
+            rng_types=["cuda"],
+    )
 
     if accelerator.is_main_process:
         if output_dir is not None:
@@ -153,6 +155,8 @@ def main():
         weight_decay=adam_weight_decay,
         eps=adam_epsilon,
     )
+
+    print('Loading data')
 
     if not os.path.exists("mini_classes.txt"):
         os.system("wget 'https://raw.githubusercontent.com/zaidalyafeai/zaidalyafeai.github.io/master/sketcher/mini_classes.txt'")
@@ -297,6 +301,8 @@ def main():
     num_validation_images = 1
     max_grad_norm = 1.0
 
+    # Train!
+    print("***** Running training *****")
     for epoch in range(first_epoch, num_train_epochs):
         unet.train()
         train_loss = 0.0
@@ -367,7 +373,7 @@ def main():
                     break
             
             if accelerator.is_main_process:
-                validation_prompt = "a scribble of horse"
+                validation_prompt = "a scribble of cat"
                 if epoch % validation_epochs == 0:
                     logger.info(
                         f"Running validation... \n Generating {num_validation_images} images with prompt:"
