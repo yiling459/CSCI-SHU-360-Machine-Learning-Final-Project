@@ -245,7 +245,7 @@ def main():
 
     train_transforms = transforms.Compose(
         [
-            transforms.Resize(512, interpolation=transforms.InterpolationMode.BICUBIC),
+            # transforms.Resize(512, interpolation=transforms.InterpolationMode.BICUBIC),
             transforms.RandomHorizontalFlip(),
             transforms.ToTensor(),
             transforms.Normalize([0.5], [0.5]),
