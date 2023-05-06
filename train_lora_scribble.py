@@ -183,13 +183,13 @@ def main():
         labels = []
 
         for idx, file in enumerate(all_files):
-        data = np.load(file)
-        data = data[0: max_items_per_class, :]
+            data = np.load(file)
+            data = data[0: max_items_per_class, :]
 
-        class_name, ext = os.path.splitext(os.path.basename(file))
-        labels.extend(["a scribble of " + class_name for i in range(data.shape[0])])
+            class_name, ext = os.path.splitext(os.path.basename(file))
+            labels.extend(["a scribble of " + class_name for i in range(data.shape[0])])
 
-        imgs = np.concatenate((imgs, data), axis=0)
+            imgs = np.concatenate((imgs, data), axis=0)
 
 
         return imgs, labels
