@@ -198,7 +198,7 @@ def main():
     else:
         print('scribble_data already exists')
 
-    max_items_per_class = 200
+    max_items_per_class = 100
     def load_data_for_diffusion(root, max_items_per_class= max_items_per_class ):
         all_files = glob.glob(os.path.join(root, '*.npy'))
 
