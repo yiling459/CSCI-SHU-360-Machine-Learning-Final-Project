@@ -79,7 +79,7 @@ def main():
             gradient_accumulation_steps=1,
             mixed_precision="fp16",
             log_with="tensorboard",
-            project_dir=logging_dir,
+            logging_dir=logging_dir,
             project_config=accelerator_project_config,
             rng_types=["cuda"],
     )
