@@ -154,7 +154,7 @@ def main():
         eps=adam_epsilon,
     )
 
-    os.system("!wget 'https://raw.githubusercontent.com/zaidalyafeai/zaidalyafeai.github.io/master/sketcher/mini_classes.txt'")
+    os.system("wget 'https://raw.githubusercontent.com/zaidalyafeai/zaidalyafeai.github.io/master/sketcher/mini_classes.txt'")
 
     f = open("mini_classes.txt","r")
     # And for reading use
@@ -173,8 +173,8 @@ def main():
             # print(path)
             urllib.request.urlretrieve(path, 'scribble_data/'+c+'.npy')
 
-    if os.path('scribble_data') is None:
-        os.makedirs(os.path('scribble_data'))
+    if not os.path.exists('scribble_data'):
+        os.makedirs('scribble_data')
         download()
 
     def load_data_for_diffusion(root, max_items_per_class= 4000 ):
