@@ -156,11 +156,11 @@ def main():
 
 
     optimizer_cls = torch.optim.AdamW
-    learning_rate = 1e-4 #@param {type:"number"}
-    adam_beta1 = 0.9 #@param {type:"number"}
-    adam_beta2 = 0.999 #@param {type:"number"}
-    adam_weight_decay = 1e-2 #@param {type:"number"}
-    adam_epsilon = 1e-08 #@param {type:"number"}
+    learning_rate = 1e-4
+    adam_beta1 = 0.9
+    adam_beta2 = 0.999
+    adam_weight_decay = 1e-2
+    adam_epsilon = 1e-08
 
 
     optimizer = optimizer_cls(
@@ -198,7 +198,8 @@ def main():
     else:
         print('scribble_data already exists')
 
-    def load_data_for_diffusion(root, max_items_per_class= 4000 ):
+    max_items_per_class = 200
+    def load_data_for_diffusion(root, max_items_per_class= max_items_per_class ):
         all_files = glob.glob(os.path.join(root, '*.npy'))
 
         #initialize variables
