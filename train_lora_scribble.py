@@ -370,54 +370,54 @@ def main():
                 lr_scheduler.step()
                 optimizer.zero_grad()
                 
-                # update procress bar
-                if accelerator.sync_gradients:
-                    progress_bar.update(1)
-                    global_step += 1
-    #                 accelerator.log({"train_loss":  train_loss}, step=global_step)
-                    train_loss = 0.0
-                    
-                    if global_step % checkpointing_steps == 0:
-                        if accelerator.is_main_process:
-                            save_path = os.path.join(output_dir, f"checkpoint-{global_step}")
-                            accelerator.save_state(save_path)
-                            logger.info(f"Saved state to {save_path}")
-                            
-                logs = {"step_loss": loss.detach().item(), "lr": lr_scheduler.get_last_lr()[0]}
-                progress_bar.set_postfix(**logs)
-                
-                if global_step >= max_train_steps:
-                    break
-            
-            if accelerator.is_main_process:
-                validation_prompt = "a scribble of cat"
-                if epoch % validation_epochs == 0:
-                    logger.info(
-                        f"Running validation... \n Generating {num_validation_images} images with prompt:"
-                        f" {validation_prompt}."
+            # update procress bar
+            if accelerator.sync_gradients:
+                progress_bar.update(1)
+                global_step += 1
+                accelerator.log({"train_loss":  train_loss}, step=global_step)
+                train_loss = 0.0
+
+                if global_step % checkpointing_steps == 0:
+                    if accelerator.is_main_process:
+                        save_path = os.path.join(output_dir, f"checkpoint-{global_step}")
+                        accelerator.save_state(save_path)
+                        logger.info(f"Saved state to {save_path}")
+
+            logs = {"step_loss": loss.detach().item(), "lr": lr_scheduler.get_last_lr()[0]}
+            progress_bar.set_postfix(**logs)
+
+            if global_step >= max_train_steps:
+                break
+
+        if accelerator.is_main_process:
+            validation_prompt = "a scribble of cat"
+            if epoch % validation_epochs == 0:
+                logger.info(
+                    f"Running validation... \n Generating {num_validation_images} images with prompt:"
+                    f" {validation_prompt}."
+                )
+
+                # create pipeline
+                pipeline = DiffusionPipeline.from_pretrained(
+                    pretrained_model_name_or_path,
+                    unet=accelerator.unwrap_model(unet),
+                    revision=None,
+                    torch_dtype=weight_dtype,
+                )
+
+                pipeline = pipeline.to(accelerator.device)
+                pipeline.set_progress_bar_config(disable=True)
+
+                # run inference
+                generator = torch.Generator(device=accelerator.device).manual_seed(seed)
+                images = []
+                for _ in range(num_validation_images):
+                    images.append(
+                        pipeline(validation_prompt, num_inference_steps=30, generator=generator).images[0]
                     )
-                    
-                    # create pipeline
-                    pipeline = DiffusionPipeline.from_pretrained(
-                        pretrained_model_name_or_path,
-                        unet=accelerator.unwrap_model(unet),
-                        revision=None,
-                        torch_dtype=weight_dtype,
-                    )
-                    
-                    pipeline = pipeline.to(accelerator.device)
-                    pipeline.set_progress_bar_config(disable=True)
-                    
-                    # run inference
-                    generator = torch.Generator(device=accelerator.device).manual_seed(seed)
-                    images = []
-                    for _ in range(num_validation_images):
-                        images.append(
-                            pipeline(validation_prompt, num_inference_steps=30, generator=generator).images[0]
-                        )
-                        
-                    del pipeline
-                    torch.cuda.empty_cache()
+
+                del pipeline
+                torch.cuda.empty_cache()
 
     # save lora layers
     accelerator.wait_for_everyone()
