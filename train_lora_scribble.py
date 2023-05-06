@@ -154,12 +154,9 @@ def main():
         eps=adam_epsilon,
     )
 
-<<<<<<< HEAD
-    os.system("wget 'https://raw.githubusercontent.com/zaidalyafeai/zaidalyafeai.github.io/master/sketcher/mini_classes.txt'")
-=======
     if not os.path.exists("mini_classes.txt"):
         os.system("wget 'https://raw.githubusercontent.com/zaidalyafeai/zaidalyafeai.github.io/master/sketcher/mini_classes.txt'")
->>>>>>> 0e08fcf33325099333d374a0bbbe391aec0df1fc
+
 
     f = open("mini_classes.txt","r")
     # And for reading use
