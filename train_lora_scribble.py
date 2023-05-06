@@ -154,7 +154,8 @@ def main():
         eps=adam_epsilon,
     )
 
-    os.system("!wget 'https://raw.githubusercontent.com/zaidalyafeai/zaidalyafeai.github.io/master/sketcher/mini_classes.txt'")
+    if not os.path.exists("mini_classes.txt"):
+        os.system("wget 'https://raw.githubusercontent.com/zaidalyafeai/zaidalyafeai.github.io/master/sketcher/mini_classes.txt'")
 
     f = open("mini_classes.txt","r")
     # And for reading use
@@ -162,8 +163,6 @@ def main():
     f.close()
 
     classes = [c.replace('\n','').replace(' ','_') for c in classes]
-
-
 
     def download():
         base = 'https://storage.googleapis.com/quickdraw_dataset/full/numpy_bitmap/'
@@ -176,6 +175,8 @@ def main():
     if os.path('scribble_data') is None:
         os.makedirs(os.path('scribble_data'))
         download()
+    else:
+        print('scribble_data already exists')
 
     def load_data_for_diffusion(root, max_items_per_class= 4000 ):
         all_files = glob.glob(os.path.join(root, '*.npy'))
@@ -196,7 +197,7 @@ def main():
 
         return imgs, labels
 
-    imgs, labels = load_data_for_diffusion('data')
+    imgs, labels = load_data_for_diffusion('scribble_data')
 
     from PIL import Image
     def gen_for_hf(imgs, labels):
