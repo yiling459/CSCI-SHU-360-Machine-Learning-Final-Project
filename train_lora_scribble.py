@@ -76,7 +76,7 @@ def main():
     accelerator_project_config = ProjectConfiguration(total_limit=None)
 
     accelerator = Accelerator(
-            gradient_accumulation_steps=1,
+            gradient_accumulation_steps=4,
             mixed_precision="fp16",
             log_with="tensorboard",
             logging_dir=logging_dir,
@@ -281,9 +281,9 @@ def main():
     num_train_epochs = 100
     num_update_steps_per_epoch = math.ceil(len(train_dataloader) / gradient_accumulation_steps)
     max_train_steps = num_train_epochs * num_update_steps_per_epoch
-    lr_warmup_steps = 500
+    lr_warmup_steps = 0
 
-    lr_scheduler = "constant"
+    lr_scheduler = "cosine"
     lr_scheduler = get_scheduler(
         lr_scheduler,
         optimizer=optimizer,
