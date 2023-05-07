@@ -267,7 +267,7 @@ def main():
         input_ids = torch.stack([example['input_ids'] for example in examples])
         return {"pixel_values": pixel_values, "input_ids": input_ids}
 
-    train_batch_size=10
+    train_batch_size=9
 
     train_dataloader = torch.utils.data.DataLoader(
         train_dataset,
