@@ -274,7 +274,7 @@ def main():
         shuffle=True,
         collate_fn=collate_fn,
         batch_size=train_batch_size,
-        num_workers=8,
+        num_workers=2,
     )
 
     gradient_accumulation_steps = 4
