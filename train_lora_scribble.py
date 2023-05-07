@@ -277,7 +277,7 @@ def main():
         num_workers=8,
     )
 
-    gradient_accumulation_steps = 1
+    gradient_accumulation_steps = 4
     num_train_epochs = 100
     num_update_steps_per_epoch = math.ceil(len(train_dataloader) / gradient_accumulation_steps)
     max_train_steps = num_train_epochs * num_update_steps_per_epoch
