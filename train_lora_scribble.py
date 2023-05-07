@@ -245,8 +245,9 @@ def main():
 
     train_transforms = transforms.Compose(
         [
-            # transforms.Resize(512, interpolation=transforms.InterpolationMode.BICUBIC),
+            transforms.Resize(512, interpolation=transforms.InterpolationMode.BICUBIC),
             transforms.RandomHorizontalFlip(),
+            transforms.RandomInvert(p=1),
             transforms.ToTensor(),
             transforms.Normalize([0.5], [0.5]),
         ]
@@ -273,7 +274,7 @@ def main():
         shuffle=True,
         collate_fn=collate_fn,
         batch_size=train_batch_size,
-        num_workers=0,
+        num_workers=8,
     )
 
     gradient_accumulation_steps = 1
@@ -413,10 +414,9 @@ def main():
                 # run inference
                 generator = torch.Generator(device=accelerator.device).manual_seed(seed)
                 images = []
-                for _ in range(num_validation_images):
-                    images.append(
-                        pipeline(validation_prompt, num_inference_steps=30, generator=generator).images[0]
-                    )
+                for i in range(num_validation_images):
+                    image = pipeline(validation_prompt, num_inference_steps=30, generator=generator).images[0]
+                    image.save(os.path.join(output_dir, f"validation_{epoch}_{i}.png"))
 
                 del pipeline
                 torch.cuda.empty_cache()
@@ -441,8 +441,9 @@ def main():
     generator = torch.Generator(device=accelerator.device).manual_seed(seed)
     images = []
 
-    for _ in range(num_validation_images):
-        images.append(pipeline(validation_prompt, num_inference_steps=30, generator=generator).images[0])
+    for i in range(num_validation_images):
+        image = pipeline(validation_prompt, num_inference_steps=30, generator=generator).images[0]
+        image.save(os.path.join(output_dir, f"final_{i}.png"))
         
     accelerator.end_training()
 
