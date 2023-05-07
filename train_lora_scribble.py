@@ -277,7 +277,7 @@ def main():
         num_workers=8,
     )
 
-    gradient_accumulation_steps = 4
+    gradient_accumulation_steps = 1
     num_train_epochs = 100
     num_update_steps_per_epoch = math.ceil(len(train_dataloader) / gradient_accumulation_steps)
     max_train_steps = num_train_epochs * num_update_steps_per_epoch
@@ -319,7 +319,7 @@ def main():
     progress_bar.set_description("Steps")
 
     checkpointing_steps = 500
-    validation_epochs = 100
+    validation_epochs = 10
     num_validation_images = 1
     max_grad_norm = 1.0
 
