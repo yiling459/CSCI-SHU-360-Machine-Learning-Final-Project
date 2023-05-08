@@ -315,6 +315,27 @@ def main():
     global_step = 0
     first_epoch = 0
 
+    # load from checkpoint if there is one
+    resume_from_checkpoint = True
+    if resume_from_checkpoint:
+        dirs = os.listdir(output_dir)
+        dirs = [d for d in dirs if d.startswith("checkpoint")]
+        dirs = sorted(dirs, key=lambda x: int(x.split("-")[-1]))
+        path = dirs[-1] if len(dirs) > 0 else None
+
+    if path is None:
+        accelerator.print(f"No checkpoint found in {output_dir}. Starting from scratch")
+        resume_from_checkpoint = False
+    else:
+        accelerator.print(f"Checkpoint found in {output_dir}. Resuming from checkpoint")
+        accelerator.load_state(os.path.join(output_dir, path))
+        global_step = int(path.split("-")[1])
+
+        resume_global_step = global_step * gradient_accumulation_steps
+        first_epoch = global_step // num_update_steps_per_epoch
+        resume_step = resume_global_step % (num_update_steps_per_epoch * gradient_accumulation_steps)
+
+
     progress_bar = tqdm(range(global_step, max_train_steps), disable=not accelerator.is_local_main_process)
     progress_bar.set_description("Steps")
 
@@ -327,6 +348,11 @@ def main():
         unet.train()
         train_loss = 0.0
         for step, batch in enumerate(train_dataloader):
+            if resume_from_checkpoint and epoch == first_epoch and step < resume_step:
+                if step % gradient_accumulation_steps == 0:
+                    progress_bar.update(1)
+                continue
+
             with accelerator.accumulate(unet):
                 # convert images to latent space
                 latents = vae.encode(batch["pixel_values"].to(dtype=weight_dtype)).latent_dist.sample()
