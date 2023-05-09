@@ -198,7 +198,7 @@ def main():
     else:
         print('scribble_data already exists')
 
-    max_items_per_class = 500
+    max_items_per_class = 50
     def load_data_for_diffusion(root, max_items_per_class= max_items_per_class ):
         all_files = glob.glob(os.path.join(root, '*.npy'))
 
@@ -267,7 +267,7 @@ def main():
         input_ids = torch.stack([example['input_ids'] for example in examples])
         return {"pixel_values": pixel_values, "input_ids": input_ids}
 
-    train_batch_size=9
+    train_batch_size=2
 
     train_dataloader = torch.utils.data.DataLoader(
         train_dataset,
@@ -278,7 +278,7 @@ def main():
     )
 
     gradient_accumulation_steps = 4
-    num_train_epochs = 100
+    num_train_epochs = 70
     num_update_steps_per_epoch = math.ceil(len(train_dataloader) / gradient_accumulation_steps)
     max_train_steps = num_train_epochs * num_update_steps_per_epoch
     lr_warmup_steps = 0
