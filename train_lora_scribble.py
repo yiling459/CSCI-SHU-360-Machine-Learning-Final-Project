@@ -198,7 +198,7 @@ def main():
     else:
         print('scribble_data already exists')
 
-    max_items_per_class = 20
+    max_items_per_class = 50
     def load_data_for_diffusion(root, max_items_per_class= max_items_per_class ):
         all_files = glob.glob(os.path.join(root, '*.npy'))
 
@@ -228,6 +228,10 @@ def main():
             yield {"image": img, "text": label}
 
     scribble_dataset = Dataset.from_generator(gen_for_hf, gen_kwargs={"imgs": imgs, "labels": labels})
+    # shuffle the dataset
+    scribble_dataset = scribble_dataset.shuffle(seed=0)
+    scribble_dataset.train_test_split(test_size=0.3)
+    scribble_dataset_train = scribble_dataset['train']
 
     def tokenize_captions(examples):
         captions = []
@@ -259,7 +263,8 @@ def main():
         examples["input_ids"] = tokenize_captions(examples)
         return examples
 
-    train_dataset = scribble_dataset.with_transform(preprocess_train)
+    train_dataset = scribble_dataset['train'].with_transform(preprocess_train)
+    test_dataset = scribble_dataset['test'].with_transform(preprocess_train)
 
     def collate_fn(examples):
         pixel_values = torch.stack([example['pixel_values'] for example in examples])
@@ -277,7 +282,7 @@ def main():
         num_workers=2,
     )
 
-    gradient_accumulation_steps = 4
+    gradient_accumulation_steps = 6
     num_train_epochs = 100
     num_update_steps_per_epoch = math.ceil(len(train_dataloader) / gradient_accumulation_steps)
     max_train_steps = num_train_epochs * num_update_steps_per_epoch
@@ -340,7 +345,7 @@ def main():
     progress_bar.set_description("Steps")
 
     checkpointing_steps = 500
-    validation_epochs = 10
+    validation_epochs = 1
     num_validation_images = 1
     max_grad_norm = 1.0
 
@@ -429,6 +434,7 @@ def main():
                 # create pipeline
                 pipeline = DiffusionPipeline.from_pretrained(
                     pretrained_model_name_or_path,
+                    safety_checker = None,
                     unet=accelerator.unwrap_model(unet),
                     revision=None,
                     torch_dtype=weight_dtype,
@@ -455,7 +461,7 @@ def main():
 
     # final inference
     pipeline = DiffusionPipeline.from_pretrained(
-        pretrained_model_name_or_path, revision=None, torch_dtype=weight_dtype
+        pretrained_model_name_or_path, safety_checker = None, revision=None, torch_dtype=weight_dtype
     )
 
     pipeline = pipeline.to(accelerator.device)
