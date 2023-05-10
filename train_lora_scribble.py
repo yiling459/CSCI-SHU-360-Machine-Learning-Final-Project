@@ -340,7 +340,7 @@ def main():
     progress_bar.set_description("Steps")
 
     checkpointing_steps = 500
-    validation_epochs = 10
+    validation_epochs = 1
     num_validation_images = 1
     max_grad_norm = 1.0
 
@@ -429,6 +429,7 @@ def main():
                 # create pipeline
                 pipeline = DiffusionPipeline.from_pretrained(
                     pretrained_model_name_or_path,
+                    safety_checker = None,
                     unet=accelerator.unwrap_model(unet),
                     revision=None,
                     torch_dtype=weight_dtype,
@@ -455,7 +456,7 @@ def main():
 
     # final inference
     pipeline = DiffusionPipeline.from_pretrained(
-        pretrained_model_name_or_path, revision=None, torch_dtype=weight_dtype
+        pretrained_model_name_or_path, safety_checker = None, revision=None, torch_dtype=weight_dtype
     )
 
     pipeline = pipeline.to(accelerator.device)
