@@ -56,8 +56,6 @@
 │   └── try_ndjson.ipynb
 ├── README.md
 └── Training
-    ├── Cindy
-    ├── Lizzy
     ├── categories.txt
     ├── dataset_example.ipynb
     ├── lora_output
