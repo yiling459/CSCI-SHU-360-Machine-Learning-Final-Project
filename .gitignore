@@ -5,3 +5,4 @@ Thumbs.db
 *.DS_Store
 .idea/
 scribble_data/
+.ipynb_checkpoints/
