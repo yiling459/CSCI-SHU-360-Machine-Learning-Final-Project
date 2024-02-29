@@ -1,7 +1,7 @@
 # CSCI-SHU 360 Machine Learning Final Project
-> Author: Ricercar & Yiling 
+> Author: Ricercar Guo & Yiling Cao
 
- The final project of CSCI-SHU 360 Machine Learning. Trying to train a diffusion model for scribble image generation
+ This is the final project of CSCI-SHU 360 Machine Learning. Trying to train a diffusion model for scribble image generation.
 
 ## Dataset
 * https://huggingface.co/datasets/quickdraw
